@@ -49,12 +49,25 @@ class CategoryRepository extends ServiceEntityRepository
 
         $qb = $this->createQueryBuilder('category')
                     ->addOrderBy('category.name',Criteria::DESC);
-                  
+        
         $query = $qb->getQuery();
 
         //dd($query->getDQL());
 
         return $query->getResult();
+    }
+
+    /**
+     *  @param string $search Search word  
+     *  @return Category[] Returns an array of Category objects
+     */
+    public function search(string $search): array{
+        return $this->createQueryBuilder('category')
+            ->andWhere('category.name LIKE :searchword')
+            ->setParameter('searchword', '%'.$search.'%')
+            ->getQuery()
+            ->getResult()
+            ;
     }
 
 //    /**
