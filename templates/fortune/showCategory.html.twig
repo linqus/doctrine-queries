@@ -13,7 +13,9 @@
                         Fortunes
                     </th>
                     <th class="border p-4">
-                        Print History ({{ fortunePrinted|number_format(0, ',', ' ') }} total)
+                        Print History 
+                            {{ fortuneStats.fortunePrinted|number_format(0, ',', ' ') }} total <br>
+                            {{ fortuneStats.averagePrinted|number_format(0, ',', ' ') }} average
                     </th>
                 </tr>
             </thead>
