@@ -13,7 +13,7 @@ class FortuneController extends AbstractController
     #[Route('/', name: 'app_homepage')]
     public function index(CategoryRepository $categoryRepository): Response
     {
-        $categories = $categoryRepository->findAll();
+        $categories = $categoryRepository->findAllOrdered();
 
         return $this->render('fortune/homepage.html.twig',[
             'categories' => $categories
