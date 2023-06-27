@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Category;
 use App\Entity\FortuneCookie;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -37,6 +38,21 @@ class FortuneCookieRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+
+    public function fortunePrinted(Category $category): int
+    {
+        $query = $this->createQueryBuilder('fortuneCookie')
+                ->select('SUM(fortuneCookie.numberPrinted) as fortunePrinted')
+                ->andWhere('fortuneCookie.category = :category')
+                ->setParameter('category',$category)
+                ->getQuery()
+                ->getSingleScalarResult()
+                ;
+        //dd($query);
+
+        return (int)$query;
     }
 
 //    /**
