@@ -62,13 +62,14 @@ class CategoryRepository extends ServiceEntityRepository
      *  @return Category[] Returns an array of Category objects
      */
     public function search(string $search): array{
-        return $this->createQueryBuilder('category')
+        $query = $this->createQueryBuilder('category')
+            ->addSelect('fortCook')
             ->leftJoin('category.fortuneCookies', 'fortCook')
             ->andWhere('category.name LIKE :searchword OR category.iconKey LIKE :searchword OR fortCook.fortune LIKE :searchword')
             ->setParameter('searchword', '%'.$search.'%')
-            ->getQuery()
-            ->getResult()
-            ;
+            ->getQuery();
+        //dd($query->getDQL());
+        return $query->getResult();
     }
 
 //    /**
