@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
@@ -71,14 +72,22 @@ class Category
      */
     public function getFortuneCookiesStillInProduction(): Collection
     {
-        $activeFortunes = new ArrayCollection();
+    /*         $activeFortunes = new ArrayCollection();
 
-        foreach ($this->getFortuneCookies() as $fortuneCookie) {
-            if (!$fortuneCookie->isdiscontinued()) {
-                $activeFortunes->add($fortuneCookie);
-            }
-        } 
-        return $activeFortunes;
+            foreach ($this->getFortuneCookies() as $fortuneCookie) {
+                if (!$fortuneCookie->isdiscontinued()) {
+                    $activeFortunes->add($fortuneCookie);
+                }
+            } 
+            return $activeFortunes; */
+
+        $criteria = Criteria::create()
+            ->andWhere(Criteria::expr()->eq('discontinued',false));
+
+        
+        return $this
+                ->getFortuneCookies()
+                ->matching($criteria);    
     }
 
     public function addFortuneCookie(FortuneCookie $fortuneCookie): self
