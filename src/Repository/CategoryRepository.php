@@ -48,8 +48,7 @@ class CategoryRepository extends ServiceEntityRepository
     {
         //$dql = 'SELECT category FROM App\Entity\Category as category ORDER BY category.name DESC';
 
-        $qb = $this->createQueryBuilder('category')
-                    ->addOrderBy('category.name',Criteria::DESC);
+        $qb = $this->addOrderByCategoryName();
         
         $query = $qb->getQuery();
 
@@ -63,7 +62,10 @@ class CategoryRepository extends ServiceEntityRepository
      *  @return Category[] Returns an array of Category objects
      */
     public function search(string $search): array{
-        $query = $this->addFortuneCookieJoinAndSelect()
+
+        $qb = $this->addOrderByCategoryName();
+
+        $query = $this->addFortuneCookieJoinAndSelect($qb)
             ->andWhere('category.name LIKE :searchword OR category.iconKey LIKE :searchword OR fortuneCookie.fortune LIKE :searchword')
             ->setParameter('searchword', '%'.$search.'%')
             ->getQuery();
@@ -88,6 +90,12 @@ class CategoryRepository extends ServiceEntityRepository
         return ($queryBuilder ?? $this->createQueryBuilder('category'))
             ->addSelect('fortuneCookie')
             ->leftJoin('category.fortuneCookies','fortuneCookie');
+    }
+
+    private function addOrderByCategoryName(QueryBuilder $queryBuilder = null): QueryBuilder
+    {
+        return ($queryBuilder ?? $this->createQueryBuilder('category'))
+            ->addOrderBy('category.name',Criteria::DESC);
     }
     
 //    /**
