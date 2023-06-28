@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Category;
 use App\Entity\FortuneCookie;
+use App\Model\CategoryFortuneStats;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -41,21 +42,23 @@ class FortuneCookieRepository extends ServiceEntityRepository
     }
 
 
-    public function fortunePrinted(Category $category): array
+    public function fortunePrinted(Category $category): ?CategoryFortuneStats
     {
         $query = $this->createQueryBuilder('fortuneCookie')
+                ->select(sprintf(
+                    'NEW %s(
+                        SUM(fortuneCookie.numberPrinted),
+                        AVG(fortuneCookie.numberPrinted),
+                        category.name
+                    ) ',CategoryFortuneStats::class))
                 ->join('fortuneCookie.category','category')
-                ->select('SUM(fortuneCookie.numberPrinted) as fortunePrinted')
-                ->addSelect('AVG(fortuneCookie.numberPrinted) averagePrinted')
-                ->addSelect('category.name')
                 ->andWhere('fortuneCookie.category = :category')
                 ->setParameter('category',$category)
                 ->getQuery()
-                ->getSingleResult()
                 ;
-        //dd($query);
-
-        return $query;
+        //dd($query->getSingleResult());
+        
+        return $query->getSingleResult();
     }
 
 //    /**
