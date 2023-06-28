@@ -32,7 +32,7 @@ class FortuneController extends AbstractController
     #[Route('/category/{id}', name: 'app_category_show')]
     public function showCategory(int $id, CategoryRepository $categoryRepository, FortuneCookieRepository $fortuneCookieRepository): Response
     {
-        $category = $categoryRepository->findWithFortunesJoin($id);
+        $category = $categoryRepository->find($id);
 
         if (!$category) {
             throw $this->createNotFoundException('No such category');

@@ -66,6 +66,21 @@ class Category
         return $this->fortuneCookies;
     }
 
+    /**
+     * @return Collection<int, FortuneCookie>
+     */
+    public function getFortuneCookiesStillInProduction(): Collection
+    {
+        $activeFortunes = new ArrayCollection();
+
+        foreach ($this->getFortuneCookies() as $fortuneCookie) {
+            if (!$fortuneCookie->isdiscontinued()) {
+                $activeFortunes->add($fortuneCookie);
+            }
+        } 
+        return $activeFortunes;
+    }
+
     public function addFortuneCookie(FortuneCookie $fortuneCookie): self
     {
         if (!$this->fortuneCookies->contains($fortuneCookie)) {
