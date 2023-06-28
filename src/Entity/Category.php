@@ -3,9 +3,9 @@
 namespace App\Entity;
 
 use App\Repository\CategoryRepository;
+use App\Repository\FortuneCookieRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
@@ -81,13 +81,9 @@ class Category
             } 
             return $activeFortunes; */
 
-        $criteria = Criteria::create()
-            ->andWhere(Criteria::expr()->eq('discontinued',false));
-
-        
         return $this
                 ->getFortuneCookies()
-                ->matching($criteria);    
+                ->matching(FortuneCookieRepository::createNotDiscontinuedFortunesCriteria());    
     }
 
     public function addFortuneCookie(FortuneCookie $fortuneCookie): self
