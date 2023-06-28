@@ -6,6 +6,7 @@ use App\Entity\Category;
 use App\Entity\FortuneCookie;
 use App\Model\CategoryFortuneStats;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -44,6 +45,7 @@ class FortuneCookieRepository extends ServiceEntityRepository
 
     public function fortunePrinted(Category $category): ?CategoryFortuneStats
     {
+        /*         
         $query = $this->createQueryBuilder('fortuneCookie')
                 ->select(sprintf(
                     'NEW %s(
@@ -56,9 +58,21 @@ class FortuneCookieRepository extends ServiceEntityRepository
                 ->setParameter('category',$category)
                 ->getQuery()
                 ;
-        //dd($query->getSingleResult());
+        //dd($query->getSingleResult()); 
+        */
+
+        $conn = $this->getEntityManager()->getConnection();
+        //$sql = 'SELECT * from fortune_cookie';
+        $sql = 'SELECT SUM(fortune_cookie.number_printed) AS fortunePrinted, AVG(fortune_cookie.number_printed) averagePrinted, category.name categoryName FROM fortune_cookie INNER JOIN category ON category.id = fortune_cookie.category_id WHERE fortune_cookie.category_id = :category';
+
+        $statement = $conn->prepare($sql);
+        $statement->bindValue('category',$category->getId(),ParameterType::INTEGER);
+
+        $result = $statement->executeQuery();
+
         
-        return $query->getSingleResult();
+        //dd(...$result->fetchAssociative());
+        return new CategoryFortuneStats(...$result->fetchAssociative());
     }
 
 //    /**
