@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Category;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -62,10 +63,8 @@ class CategoryRepository extends ServiceEntityRepository
      *  @return Category[] Returns an array of Category objects
      */
     public function search(string $search): array{
-        $query = $this->createQueryBuilder('category')
-            ->addSelect('fortCook')
-            ->leftJoin('category.fortuneCookies', 'fortCook')
-            ->andWhere('category.name LIKE :searchword OR category.iconKey LIKE :searchword OR fortCook.fortune LIKE :searchword')
+        $query = $this->addFortuneCookieJoinAndSelect($this->createQueryBuilder('category'))
+            ->andWhere('category.name LIKE :searchword OR category.iconKey LIKE :searchword OR fortuneCookie.fortune LIKE :searchword')
             ->setParameter('searchword', '%'.$search.'%')
             ->getQuery();
         //dd($query->getDQL());
@@ -74,9 +73,8 @@ class CategoryRepository extends ServiceEntityRepository
 
     public function findWithFortunesJoin(int $id): ?Category
     {
-        $query = $this->createQueryBuilder('category')
-                    ->addSelect('fortuneCookie')
-                    ->leftJoin('category.fortuneCookies','fortuneCookie')
+        $qb = $this->createQueryBuilder('category');
+        $query = $this->addFortuneCookieJoinAndSelect($qb)
                     ->andWhere('category.id = :id')
                     ->setParameter('id',$id)
                     ->getQuery();
@@ -84,6 +82,13 @@ class CategoryRepository extends ServiceEntityRepository
                 
     }
 
+
+    private function addFortuneCookieJoinAndSelect(QueryBuilder $queryBuilder): QueryBuilder
+    {
+        return $queryBuilder->addSelect('fortuneCookie')
+            ->leftJoin('category.fortuneCookies','fortuneCookie');
+    }
+    
 //    /**
 //     * @return Category[] Returns an array of Category objects
 //     */
