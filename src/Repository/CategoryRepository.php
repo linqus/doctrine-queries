@@ -82,6 +82,7 @@ class CategoryRepository extends ServiceEntityRepository
         $query = $this->addFortuneCookieJoinAndSelect()
                     ->andWhere('category.id = :id')
                     ->setParameter('id',$id)
+                    ->orderBy('RAND()')
                     ->getQuery();
         return $query->getOneOrNullResult();
                 

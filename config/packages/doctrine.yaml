@@ -19,9 +19,13 @@ doctrine:
         filters:
             fortuneCookie_discontinued: 
                 class: App\Doctrine\DiscontinuedFilter
-                enabled: true
+                enabled: false
                 parameters:
                     discontinued: true 
+        
+        dql:
+            numeric_functions:
+                rand: DoctrineExtensions\Query\Mysql\Rand
 
 when@test:
     doctrine:

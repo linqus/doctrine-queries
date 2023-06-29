@@ -24,7 +24,7 @@ class FortuneController extends AbstractController
     {
 
         $this->entityManager->getFilters()
-            ->enable('fortuneCookie_discontinued')
+            //->enable('fortuneCookie_discontinued')
             //->setParameter('discontinued', true)
         ;
 
@@ -45,7 +45,7 @@ class FortuneController extends AbstractController
     #[Route('/category/{id}', name: 'app_category_show')]
     public function showCategory(int $id, CategoryRepository $categoryRepository, FortuneCookieRepository $fortuneCookieRepository): Response
     {
-        $category = $categoryRepository->find($id);
+        $category = $categoryRepository->findWithFortunesJoin($id);
 
         if (!$category) {
             throw $this->createNotFoundException('No such category');
